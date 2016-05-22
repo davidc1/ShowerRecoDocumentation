@@ -1,0 +1,52 @@
+\section{Reconstruction Framework}
+\paragraph{}In this chapter we hope to describe the structure of the framework that has been developed to reconstruct showers. We will describe what the input and output of the Shower Reconstruction framework are, and what steps are followed to reach the final goal of producing three-dimensional reconstructed showers.
+
+\subsection{Input to Shower Reconstruction}
+\paragraph{}The shower reconstruction framework, while independent of \texttt{LArSoft}/ \texttt{LArLite}, interfaces with them to read and write input and output data-products. The input to the shower reconstruction framework are objects referred to as \texttt{PFParticles}, for Particle-Flow Particles. A PFParticle is a simple container meant to represent a 3D object. Each \texttt{PFParticle} stores a PDG code, and several associations to other data-products. It is these associations which are used to aquire the input for shower reconstruction. \texttt{PFParticles} can be associated with multiple 2D clusters on several planes, or individual reconstructed 3D space-points. Each \texttt{PFParticle} therefore represents a potential 3D shower which has not been fully reconstructed. The goal of our shower reconstruction framework is to take shower-like \texttt{PFParticle} objects and use the information they are associated to to produce a 3D shower with physical properties such as energy, momentum, etc.
+
+\subsection{ProtoShowers}
+\paragraph{}Each algorithm in the shower reconstruction chain has access to information which can be used to reconstruct a shower's physical parameters. This information is stored in an object called \texttt{ProtoShower}. A \texttt{ProtoShower} is meant to contain all the information required by the algorithm. This information can come from several data-products, such as hits, spacepoints, clusters, etc. The purpose of the \texttt{ProtoShower} class is to serve as a container for the information to be used by the various algorithms in the shower-reconstruction steps. The \texttt{ProtoShower} class contains the following objects:
+\begin{itemize}
+\item \texttt{std::vector<cluster::cluster\_params>} $\rightarrow$ a vector of \texttt{ClusterParams} objects (one per plane, for all planes for which an input cluster for this shower is present).
+\item \texttt{cluster3D::cluster3D\_params} $\rightarrow$ a cluster3D object, representing information from the 3D spacepoints in the cluster.
+\item \texttt{std::vector<TVector3>} $\rightarrow$ a vector of 3D vertices.
+\end{itemize}
+
+\subsection{Shower}
+\paragraph{}The \texttt{Shower\_t} C++ \texttt{struct} is a container which is used to store the reconstructed quantities of each input shower, as it progresses through the reconstruction chain. This is a temporary container, which, at the end of the reconstruction path, is used to fill the \texttt{larlite::shower} data-product to be saved in an output file. We here list the attributes of this container, along with a brief description.
+\begin{itemize}
+\item \textbf{fPassedReconstruction} : boolean which stores if the current reconstructed shower is valid, or has for some reason failed the reconstruction chain. Any algorithm chan change the value of this boolean to false, in which case the candidate reconstructed shower is removed and not saved to the output.
+\item \textbf{fDCosStart} : Direction cosines (in the x,y,z coordinates of the MicroBooNE geometry) of the start of the shower. This vector is meant to represent the shower momentum.
+\item \textbf{fSigmaDCosStart} : errors on the direction cosines. {\color{red} Not used/filled anywhere.}
+\item \textbf{fXYZStart} : vector representing the 3D start point [cm] of the shower (shower vertex)
+\item \textbf{fSigmaXYZStart} : uncertanties on 3D start point [cm]. {\color{red} Not used/filled anywhere.}
+\item \textbf{fCentroid} : 3D centroid of shower. {\color{red} DESCRIBE}
+\item \textbf{fSigmaCentroid} : 3D centroid of shower. {\color{red} DESCRIBE}. {\color{red} Not used/filled anywhere.}
+\item \textbf{fLength} : 3D length of a shower [cm].
+\item \textbf{fWidth} : 3D width of a shower (2 directions).
+\item \textbf{fOpeningAngle} : 3D opening angle of a shower. The angle of the cone representing the shower, in radiants.
+\item \textbf{fTotalEnergy} : reconstructed energy of the shower [MeV].
+\item \textbf{fSigmaTotalEnergy} : reconstructed uncertainty on the energy of the shower [MeV].
+\item \textbf{fTotalEnergy\_v} : vector of econstructed energies of the shower [MeV]. One value per plane.
+\item \textbf{fSigmaTotalEnergy\_v} : vector of econstructed uncertainties on the energy of the shower [MeV]. One value per plane.
+\item \textbf{fTotalMIPEnergy\_v} : {\color{red} DEPRECATED VARIABLE}
+\item \textbf{fSigmaTotalMIPEnergy\_v} : {\color{red} DEPRECATED VARIABLE}
+\item \textbf{fdEdx} : reconstructed dE/dx [MeV/cm].
+\item \textbf{fSigmadEdx} : reconstructed uncertainty on the dE/dx [MeV/cm].
+\item \textbf{fdEdx\_v} : vector of reconstructed dE/dx [MeV/cm]. One value per plane.
+\item \textbf{fSigmadEdx} : vector of reconstructed uncertainties on the dE/dx [MeV/cm]. One value per plane.
+\item \textbf{fdQdx} : reconstructed dQ/dx [$e^-$/cm].
+\item \textbf{fSigmadQdx} : reconstructed uncertainty on the dQ/dx [$e^-$/cm].
+\item \textbf{fdQdx\_v} : vector of reconstructed dQ/dx [$e^-$/cm]. One value per plane.
+\item \textbf{fSigmadQdx} : vector of reconstructed uncertainties on the dQ/dx [$e^-$/cm]. One value per plane.
+\item \textbf{fBestdQdxPlane} : Plane on which the best reconstructed dQ/dx value can be found.
+\item \textbf{fShoweringLength} : vector of 2D distace between start point and showering point. One value per plane.
+\item \textbf{fBestPlanne} : {\color{red} DEPRECATED VARIABLE}
+\item \textbf{fPlaneIDs} : {\color{red} DESCRIBE}
+\item \textbf{fPlaneIsBad} : {\color{red} DESCRIBE}
+   
+\end{itemize}
+
+\subsection{Modular Algorithms}
+\paragraph{}Showers are reconstructed by a chain of algorithms, run sequentially. Within the framework, each algorithm aims at reconstructing specific quantities, such as the dE/dx, vertex, start point, etc of a shower. Each algorithm can use information contained in the \texttt{PFParticle} input, as well as any quantities reconstructed by previous algorithms. For example, a module which calculates the shower's dE/dx, can use the 3D direction of the shower reconstructed at a previous stage to better estimate the spatial separation of hits.
+

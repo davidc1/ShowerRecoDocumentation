@@ -1,0 +1,134 @@
+
+\section{Event Selection}
+\label{sec:Selection}
+
+In order to measure the separation of electron-like events from photon-like events  
+a sub-sample of ArgoNeuT events that contained EM-showers was first isolated. This sub-sample was later used to select well defined electron and photon events
+used to calculate the final separation.
+
+% electrons and photons in a way that provides 
+% excellent purity in each respective sample.  For this analysis, the samples were 
+% achieved by applying a topological based cut described in 
+% \ref{sec:topology_cut}.  Prior to this step, however, a sample of 
+% electromagnetic showers must be isolated from the data.
+
+Selecting the sub-sample of electromagnetic showers was automated and based on the information gained 
+from the 2-dimensional clusters of charge depositions (hits). In the first step 
+ empty events and those with only track like particles in them were removed from the sample using 
+ an automated filter. This filter looked at two-dimensional clusters of hits made with the LArSoft package 
+and calculated several parameters of these clusters to differentiate between track-like and shower-like clusters 
+\cite{LArSoft}. The metrics that performed best in separating the two event populations were the modified hit density (MHD) 
+where a large number of hits per unit of length of the cluster axis suggests a developing EM-shower and the first eigenvalue
+obtained from Principal Component Analysis PCE, here a value close to 1 suggests track-like clusters, as they are naturally aligned along
+the principal axis.
+Fig. \ref{fig:separation} shows these separation 
+parameters obtained using a Monte Carlo Simulation of single electrons as a prototype for electromagnetic showers, and 
+single muons and protons as a prototype for tracks. The selection cuts defined to choose shower-like clusters were:
+MHD > xx, PCE < yy. An additional requirement was that a shower-like cluster in on plane should correspond 
+to an analagous cluster in the second plane. This removed spurious tags.
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.4\textwidth]{figures/trvssh_modhitdens.png}
+\includegraphics[width=0.4\textwidth]{figures/trvssh_eigen_princ.png}
+\caption{\label{fig:separation} ``Modified hit density'' and Principal Component 
+Eigenvalue calculated for single electron showers(red) and muon track(blue).}
+\end{figure}
+
+Finally, an additional set of cuts was applied using all of the hits in a single view in 
+an event as a single cluster. These cuts served to remove high-energy Deep 
+Inelastic Scatter events and/or cosmic events which resulted in too much total 
+charge in an event. 
+
+This procedure resulted in sample of ArgoNeuT events that contained mostly EM-shower events, from which the final electron and photon samples were selected.
+
+\subsection{Topological Separation of Electrons and Photons}
+\label{sec:topology_cut}
+
+When a photon is produced in an interaction in argon, it will travel some 
+distance before it interacts with the argon and induces an electromagnetic 
+shower.  Because photons are neutral particles, they do not ionize the argon 
+until they interact with it via Compton Scattering or Pair Production channels, 
+and thus there is a visible gap between the origin of the photon and the start 
+of the electromagnetic shower. Unless there is other activity in the detector at the location of photon 
+production, the gap is impossible to detect. Therefore, we have chosen to define two types of events as photon 
+candidates: electromagnetic showers pointing back to charged particle activity 
+at a vertex with hadronic interaction, and Neutral Current $\pi^0$ events where two 
+electromagnetic showers project back to a common point.  In the second case, 
+hadronic activity at the vertex was possible but not required, and both 
+electromagnetic showers were used in the analysis.  Examples of both types of 
+photon interactions are in Fig. \ref{fig:photons}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.455\textwidth]{figures/photon_R644_E11051_ind.png}
+\includegraphics[width=0.455\textwidth]{figures/photon_R825_E12481_ind.png}
+\includegraphics[width=0.455\textwidth]{figures/photon_R644_E11051_coll.png}
+\includegraphics[width=0.455\textwidth]{figures/photon_R825_E12481_coll.png}
+\caption{\label{fig:photons} Examples of photon candidate events.  The top row 
+are the induction views and the bottom row are the collection views of two events. 
+In both cases, the key identifying feature is the gap between 
+the showers and the other activity to which they point backwards.}
+\end{figure}
+
+For a sample of electrons, this analysis targeted electron neutrino events as 
+the electron shower candidates.  To ensure a high purity, an electromagnetic shower 
+ was tagged as an electron only in events that also exhibited hadronic activity at the 
+vertex {\em without} the presence of a gap between the shower and other 
+particles.  In addition, a filter was applied to reject events where muons 
+in the MINOS nead detector projected backwards into the ArgoNeuT TPC.  This 
+ensures that the contamination from $\nu_\mu$ Charged Current events with high 
+Bremsstrahlung activity is very low.  Examples of electron candidate showers are 
+seen in Fig. \ref{fig:electrons}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.455\textwidth]{figures/electron_R775_E8598_ind.png}
+\includegraphics[width=0.455\textwidth]{figures/electron_R827_E29437_ind.png}
+\includegraphics[width=0.455\textwidth]{figures/electron_R775_E8598_coll.png}
+\includegraphics[width=0.455\textwidth]{figures/electron_R827_E29437_coll.png}
+\caption{\label{fig:electrons} Examples of electron candidate events.  The top row 
+are the induction views and the bottom row are the collection views of two events. 
+In both cases, there is no observable gap between the 
+shower and the hadronic activity.}
+\end{figure}
+
+% Electron-candidate events were chosen as EM-Showers with no visible gap to the 
+%vertex, whereas gamma candidate events were chosen as EM-Showers with a visible 
+%gap to an existing interaction vertex. Additionally, for electron events it was 
+%required that no track in the event be matched to a muon track in the MINOS Near 
+%Detector. Fig. \ref{fig:events} shows an example of an electron and gamma event. 
+%EM-Showers with no vertex activity were discarded and not used for this 
+%analysis. The hand-scan was also used to define more precise clusters including 
+%a seeding point for the start point determination. 
+
+In total, 52 electron candidate showers and 274 photon candidate showers were 
+selected for this analysis.
+
+
+% In total XX electron-candidate events and YY gamma-candidate were chosen for 
+%this analysis.
+
+
+% The purity of the chosen samples was estimated by plotting the charge from the 
+%first hits from all of the events in each sample and comparing them with 
+%templates coming from Monte-Carlo reconstructed single electron and gamma 
+%showers. 
+% In the case of the gamma events, the samples are in reasonable agreement, 
+%including the small peak at MIP energies, which is attributed to Compton 
+%scatters, which is a probable method of interaction for photons at lower 
+%energies. In the case of electrons, there is a small excess of energy 
+%depositions around the energy expected from the gamma peak sample. This is 
+%attributed to gammas converting near the vertex, that were mistaken for an 
+%electron event. Using a likelihood fit, the contamination of such events was 
+%estimated at 10\% of the electron sample - see Fig. \ref{fig:likelihood}.
+
+
+% \begin{figure}[h]
+% \centering
+% \includegraphics[width=0.45\textwidth]{landau_electons_final.png}
+% \includegraphics[width=0.445\textwidth]{landau_gammas_final.png}
+% \caption{\label{fig:landaus} The distribution of the charge from all hits in 
+%the first 2.4 cm of the reconstructed shower for electrons (left) and gammas (right).  }
+% \end{figure}

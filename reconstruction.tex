@@ -1,0 +1,141 @@
+
+\section{EM Shower Reconstruction}
+\label{sec:Reco}
+
+
+In order to measure dE/dx correctly, it is extremely important to precisely determine the start point of the shower. 
+This is due to two reasons - firstly, it is crucial to capture exactly the first couple of centimeters before the actual 
+start of shower development, because at that point the electron and photon populations 
+become indistinguishable. Secondly, the starting point is used in estimating the 
+2D angle in each view, which is then translated to the 3D axis of the shower.
+
+The proper determination of the 3D axis is important particularly to obtain 
+agreement between collection and induction 
+planes.  If the 3D axis is calculated incorrectly, the projected distance the particle travels 'dx' will be wrong
+leading to errors in the dE/dx calculation. In such cases, the reconstructed dE/dx in the induction and collection planes will be significantly different
+allowing the exclusion of mis-reconstructed events. 
+%into the collection and 
+%induction planes can cause the measure of dx in the dE/dx calculation to be 
+%incorrect.  In particular, an incorrect 3D axis will typically cause the dx 
+%between hits in one plane to be inflated, while in the other plane they are 
+%decreased.  Because of this, a loose cut on the agreement between collection and 
+%induction plane measures of dE/dx is included in the final analysis.
+
+
+The reconstruction of the shower start poins and 3D axis is performed using the LArSoft software package \cite{LArSoft}, developed and shared by all experiments in the US 
+LArTPC R\&D program. 
+%In this framework, the ADC waveforms coming from each channel processed to 
+%remove the electronics response and field shapes, especially the bi-modal 
+%induction plane field shape. This process results in very similar waveforms for 
+%both induction and collection planes allowing for their identical treatment. 
+
+The events acquired in the detector are processed in order to remove the 
+electronics and field-shape coherent noise using a FFT-based deconvolution 
+kernel on a wire-by-wire basis. A peak finding algorithm is then used to find 
+charge depositions on each wire, reconstructed as hits. The integral of 
+the charge in each hit was used to calculate the charge $dQ$ using an  
+(ADC$\times$Timetick)/Coulomb conversion constant. These constants are obtained 
+for each wire separately, using through-going muon events in a way analogous to 
+\cite{TGMuon}.
+
+% Clustering of the Hit objects was performed in two ways - an automated 
+%clustering algorithm is used first to connect the hits into associated groups in 
+%each view. These automated clusters are then fed into a post-clustering which 
+%calculates parameters like start points, angle in each view and the density of 
+%hits, along the shower axis,the eigenvalue of the first Principal Component and 
+%Charge RMS, the latter three being used for shower-track separation variables. 
+
+
+
+Once a sample of shower candidates was selected, the hits for the candidate 
+showers were manually assembled into clusters using a handscanning tool and fed into a 
+shower-reconstruction algorithm. This allowed the refinement of the start point 
+and direction in each plane for events with busy topologies.
+% , where small tracks would be incorporated into the shower cluster when using 
+%the automated reconstruction.
+The 2D parameters, including the start point and 2D cluster axis, were used to calculate the 
+3D axis of the electromagnetic shower object using an iterative algorithm.  \textit{For 
+the start point, a guess based upon the two 2D start points is made for the 3D 
+start point, and the start point in 3D is then projected into both planes.  The 
+summed error across the planes provides information to adjust the 3D start 
+point, and this process of project $\rightarrow$ calculate error $\rightarrow$ 
+adjust 3D start point is continued until the 3D start point converges.}  
+The 3D start point location can also be calculated using the start point 
+locations obtained from the hand scan.  This allows a cross check between the 
+reconstructed vertex from shower reconstruction and the hand scan.  For this 
+analysis, a cut is made at 2cm between the two vertices to remove events that 
+are poorly reconstructed. 
+%This cut removes only 1 electron event and 2 photon events, however.
+
+Similar to the 3D start point, the 3D axis is computed using an iterative 
+projection matching algorithm.  A trigonometric formula is used to compute an 
+approximate 3D axis based on the angle of each shower in the collection and 
+induction plane.  The 3D axis is then projected into each plane, and the slope 
+(in 2D) is compared against the slope of the electromagnetic showers in each 
+plane.  Based upon the quality of the match between the projection and the 2D 
+slopes, the 3D axis is adjusted until the best fit is obtained.
+
+For the calorimetric separation of electrons and photons to succeed, the dE/dx 
+metric must be well reconstructed. %For each the dx component of this measure is 
+%the distance between observed depositions of energy in the detector.  
+As the charge depositions are measured discretely in 2D 
+in each of the wire planes we use the 3D 
+axis of the shower to calculate an ``effective'' wire pitch between hits.  This 
+effective pitch is, in other words, the real distance in the TPC that a particle 
+travels between its two projections (hits) on adjacent wires - dx. 
+
+
+
+An effective cross-check of this sample of events is the distribution of every dE/dx deposition 
+measured, from all the events in the selected sample, presented in 
+Fig.~\ref{fig:electron_landau} for electrons and Fig.~\ref{fig:photon_landau} 
+for photons.  A Landau distribution, convolved with a Gaussian, is fit to the 
+electron sample while a sum of two Gaussian-convolved Landaus is fit to the 
+photon sample.  The good agreement between data and expectations gives a good indication of the .
+
+
+\begin{figure}[tb]
+   \centering
+   
+\includegraphics[width=0.45\textwidth]{figures/electron_landau_collection.png}
+   \includegraphics[width=0.45\textwidth]{figures/electron_landau_induction.png}
+   \caption{On the left is shown the distribution of dE/dx for all hits 
+considered in the calorimetric separation for electrons, in the collection 
+plane.  On the right is the same set of events using the induction plane.  
+Unlike the aggregate measure of dE/dx, this plot uses the Modified Box Model to 
+accurately capture the physics of highly ionizing fluctuations.  The parameters 
+shown represent the best fit values of the fitted Gaussian-convolved Landau 
+distributions.}
+   \label{fig:electron_landau}
+ \end{figure} 
+
+
+\begin{figure}[tb]
+   \centering
+   \includegraphics[width=0.45\textwidth]{figures/photon_landau_collection.png}
+   \includegraphics[width=0.45\textwidth]{figures/photon_landau_induction.png}
+   \caption{On the left is shown the distribution of dE/dx for all hits 
+considered in the calorimetric separation for photons, in the collection plane.  
+On the right is the same set of events using the induction plane.  Unlike the 
+aggregate measure of dE/dx, this plot uses the Modified Box Model to accurately 
+capture the physics of highly ionizing fluctuations.  The parameters shown 
+represent the best fit values of the fitted Gaussian-convolved Landau 
+distributions, using two Gaussian-convolved Landau distributions to model the 
+Compton scattering peak in the photon sample.  For the fit, the two 
+distributions were constrained to have a the Landau most probable value be in a 
+ratio of 1:2.}
+   \label{fig:photon_landau}
+ \end{figure} 
+
+
+
+% Fig. \ref{fig:reco} shows the reconstruction quality of the 3D shower starting 
+%points and the final 3D angles describing the shower axis, using the fully 
+%automated reconstruction on single showers. 
+
+
+% This in turn allowed calculating the true charge deposition per unit length - 
+%$dQ/dx$ which was used to correct for quenching, via the Birks formula 
+%\cite{Birks}. Before applying the quenching correction the charge was scaled to 
+%compensate for losses due to impurities in the liquid argon, via the lifetime 
+%correction\cite{Bruce}. 

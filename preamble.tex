@@ -1,0 +1,57 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{lineno}
+\usepackage{setspace}
+\usepackage{soul}
+\usepackage{multirow}
+\usepackage{authblk}
+\usepackage{verbatim}
+\usepackage{tabu}
+\usepackage[bottom]{footmisc}
+\usepackage[margin=1in]{geometry}
+\usepackage{lineno}
+\linenumbers
+\linespread{1.1}
+
+\newcommand{\ignore}[2]{\hspace{0in}#2}
+
+\title{\vspace{0.2in}LArTPC Shower Reconstruction Documentation}
+
+\author[1]{Corey Adams}
+\author[2]{Rui An}
+\author[3]{David Caratelli}
+\author[4]{Ryan Grosso}
+\author[1]{Ariana Hackenburg}
+\author[5]{Jeremy Hewes}
+\author[3]{David Kaleko}
+\author[5]{Andrzej Szelc}
+\author[3]{Kazuhiro Terao}
+\author[6]{Yun-Tse Tsai}
+\author[7]{Joseph Zennamo}
+\affil[1]{Yale University, New Haven, CT, USA}
+\affil[2]{Illinois Institute of Technology, Chicago, IL, USA}
+\affil[3]{Nevis Laboratories, Columbia University, New York, NY, USA}
+\affil[4]{University of Cincinnati, Cincinnati, OH, USA}
+\affil[5]{Universiry of Manchester, Manchester, UK}
+\affil[6]{SLAC, Menlo Park, CA, USA}
+\affil[7]{Universiry of Chicago, Chicago, IL, USA}
+\date{\today}	
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  This document serves as documentation for the tools being developed to reconstruct electro-magnetic showers in Liquid Argon Time Projection Chamber (LArTPC) neutrino detectors. This tech-note aims to serve as documentation for:\newline
+  Those interested in learning how to use the flexible coding framework developed to perform shower reconstruction, so that they can contribute their own algorithms, or help improve those already available.\newline
+  Anyone who needs to document work which uses Shower Reconstruction can reference this document, adding the specifi details of the reconstruction chain used by their analysis. This centralized document hopefully will avoid the need to duplicate documentation for various analyses.\newline
+  Those interested in how the shower reconstruction algorithms work, such as an analysis reviewer who wants detailed information. The goal of this documentation is to describe any algorithm used in enough detail such that anyone else can reproduce an algorithm's logic-flow.
+\end{abstract}
