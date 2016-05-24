@@ -1,6 +1,7 @@
 \section{Algorithms}
+\label{sec:algos}
 \paragraph{}In this section we aim to describe in detail, and independently, the various reconstruction algorithms developed in order to perform shower reconstruction. These algorithms are elements in a reconstruction chain, which is flexible. Algorithms can be swapped and switched according to a user's specific needs. There may be different algorithms trying to reconstruct the same quantities, better suited to work in different scenarios. We first spend time describing each algorithm individually, and then provide those which are the algorithm chains currently in use.
-\paragraph{}Each algorithm is references by the name given to the C++ class used for that algorithm.
+\paragraph{}Each algorithm is referenced by the name given to the C++ class used for that algorithm.
 
 \subsection{StartPoint3DModule}
 \paragraph{}This algorithm reconstructs a 3D point which should represent the 1st charge deposition point of the shower in the TPC (i.e. the shower vertex). The input used are the 2D start points reconstructed for all clusters associated with the shower on the various planes. As a first step, the two clusters spanning the longest wire-range are selected. Information from the two 2D start points for these clusters is then combined to obtain a 3D start point. The x-position is reconstructed by averaging the time-coordinate position of the two 2D start-points. The (Y,Z) coordinate is reconstructed by finding the intersection point of the two wires (on distinct planes) on which the 2D start-points are found. {\color{red} Currently in the case in which two wires don't intersect, or don't intersect in the TPC, which are both possible outcomes, nothing is done to exclude the reconstructed 3D start-point ad a valid start-point.}
@@ -14,6 +15,13 @@
 \caption{Left: schematic showing the 2D angles measured on all three planes for a given shower-like cluster. Right: formulae which are used by the Angle3DFormula to go form the 2D angles to a 3D direction.}
 \label{fig:Angle3DFormula}
 \end{figure}
+
+\subsection{Angle3DFrmVtx}
+\paragraph{}This module computes a 3D direction given two 3D points, representing the 3D vertex where the shower was produced, and the 3D start point of the shower (where it first deposits energy). This algorithm requires that a single 3D vertex has been loaded in the \texttt{ProtoShower} object. The purpose of this algorithm is to reconstruct a good 3D direction provided a vertex (tipically the neutrino vertex) has been reconstructed. The algorithm is intended mostly to be used for a photon sample.
+\paragraph{}Given the reconstructed 3D start point of a shower, and the reconstructed vertex of origin for the electron or photon which initiates the shower, the 3D direction is given by:
+\begin{equation}
+{\rm 3Ddir} = \frac{ {\rm 3DStart} - {\rm 3Dvtx} }{ |{\rm 3DStart} - {\rm 3Dvtx}| }
+\end{equation}
 
 \subsection{dQdxModule}
 \paragraph{}This algorithm aims to calculate the dQ/dx for the first few centimeters of energy deposition of the shower in each plane. The algorithm takes as input:

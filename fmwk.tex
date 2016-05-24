@@ -1,52 +1,32 @@
 \section{Reconstruction Framework}
+\label{sec:framework}
 \paragraph{}In this chapter we hope to describe the structure of the framework that has been developed to reconstruct showers. We will describe what the input and output of the Shower Reconstruction framework are, and what steps are followed to reach the final goal of producing three-dimensional reconstructed showers.
+
+\subsection{ShowerReco3D Reconstruction Module}
+\paragraph{}Within LArLite, shower-reconstruction is run from the \texttt{ShowerReco3D} module. This module acts as an interface between the LArLite data-products and the reconstruction framework. Its goal is to load, event-by-event, candidate showers, translate them into \texttt{ProtoShowers}~\ref{subsec:protoshower} (objects that are read and used by the framework), and feed them to the chain of reconstruction algorithms which will produce 3D shower objects. These reconstructed objects are then returned to the \texttt{ShowerReco3D} module, which saves them to an output file. 
 
 \subsection{Input to Shower Reconstruction}
 \paragraph{}The shower reconstruction framework, while independent of \texttt{LArSoft}/ \texttt{LArLite}, interfaces with them to read and write input and output data-products. The input to the shower reconstruction framework are objects referred to as \texttt{PFParticles}, for Particle-Flow Particles. A PFParticle is a simple container meant to represent a 3D object. Each \texttt{PFParticle} stores a PDG code, and several associations to other data-products. It is these associations which are used to aquire the input for shower reconstruction. \texttt{PFParticles} can be associated with multiple 2D clusters on several planes, or individual reconstructed 3D space-points. Each \texttt{PFParticle} therefore represents a potential 3D shower which has not been fully reconstructed. The goal of our shower reconstruction framework is to take shower-like \texttt{PFParticle} objects and use the information they are associated to to produce a 3D shower with physical properties such as energy, momentum, etc.
+\paragraph{}The framework filters \texttt{PFParticle} objects based on their PDG code to decide whether they should be used to attempt to reconstruct a shower, or discarded. The \texttt{PFParticle.PdgCode()} function return is requrested to be equal to 11 (the PDG value for electrons) in order for the candidate shower to be reconstructed. The option to turn this filtering off is available.
 
 \subsection{ProtoShowers}
+\label{subsec:protoshower}
 \paragraph{}Each algorithm in the shower reconstruction chain has access to information which can be used to reconstruct a shower's physical parameters. This information is stored in an object called \texttt{ProtoShower}. A \texttt{ProtoShower} is meant to contain all the information required by the algorithm. This information can come from several data-products, such as hits, spacepoints, clusters, etc. The purpose of the \texttt{ProtoShower} class is to serve as a container for the information to be used by the various algorithms in the shower-reconstruction steps. The \texttt{ProtoShower} class contains the following objects:
 \begin{itemize}
 \item \texttt{std::vector<cluster::cluster\_params>} $\rightarrow$ a vector of \texttt{ClusterParams} objects (one per plane, for all planes for which an input cluster for this shower is present).
 \item \texttt{cluster3D::cluster3D\_params} $\rightarrow$ a cluster3D object, representing information from the 3D spacepoints in the cluster.
 \item \texttt{std::vector<TVector3>} $\rightarrow$ a vector of 3D vertices.
 \end{itemize}
+\paragraph{}Full details on the \texttt{protoshower::ProtoShower} class can be found \href{https://github.com/larlight/larlite/blob/trunk/UserDev/RecoTool/ShowerReco3D/ProtoShower/ProtoShower.h}{here}.
+\paragraph{}Each \texttt{ProtoShower} is built from the input \texttt{PFParticle} and associated data-products by an algorithm which inherits from the base-class \href{https://github.com/larlight/larlite/blob/trunk/UserDev/RecoTool/ShowerReco3D/ProtoShower/ProtoShowerAlgBase.h}{\texttt{ProtoShowerAlgBase}}. The main function in this class: \texttt{GenerateProtoShower} takes as input a pointer to the event \texttt{storage\_manager}, a pointer to the \texttt{larlite::event\_pfpart} data-product, and the index of the specific \texttt{PFParticle} within the \texttt{larlite::event\_pfparticle} vector for which a \texttt{ProtoShower} should be built with this function call. The last input to this function is a reference to the \texttt{ProtoShower} object being constructed. Within this function it is up to the user to decide how to use the input larlite data-products to create a \texttt{ProtoShower} object to be fed as input to the reconstruction chain.
 
 \subsection{Shower}
-\paragraph{}The \texttt{Shower\_t} C++ \texttt{struct} is a container which is used to store the reconstructed quantities of each input shower, as it progresses through the reconstruction chain. This is a temporary container, which, at the end of the reconstruction path, is used to fill the \texttt{larlite::shower} data-product to be saved in an output file. We here list the attributes of this container, along with a brief description.
-\begin{itemize}
-\item \textbf{fPassedReconstruction} : boolean which stores if the current reconstructed shower is valid, or has for some reason failed the reconstruction chain. Any algorithm chan change the value of this boolean to false, in which case the candidate reconstructed shower is removed and not saved to the output.
-\item \textbf{fDCosStart} : Direction cosines (in the x,y,z coordinates of the MicroBooNE geometry) of the start of the shower. This vector is meant to represent the shower momentum.
-\item \textbf{fSigmaDCosStart} : errors on the direction cosines. {\color{red} Not used/filled anywhere.}
-\item \textbf{fXYZStart} : vector representing the 3D start point [cm] of the shower (shower vertex)
-\item \textbf{fSigmaXYZStart} : uncertanties on 3D start point [cm]. {\color{red} Not used/filled anywhere.}
-\item \textbf{fCentroid} : 3D centroid of shower. {\color{red} DESCRIBE}
-\item \textbf{fSigmaCentroid} : 3D centroid of shower. {\color{red} DESCRIBE}. {\color{red} Not used/filled anywhere.}
-\item \textbf{fLength} : 3D length of a shower [cm].
-\item \textbf{fWidth} : 3D width of a shower (2 directions).
-\item \textbf{fOpeningAngle} : 3D opening angle of a shower. The angle of the cone representing the shower, in radiants.
-\item \textbf{fTotalEnergy} : reconstructed energy of the shower [MeV].
-\item \textbf{fSigmaTotalEnergy} : reconstructed uncertainty on the energy of the shower [MeV].
-\item \textbf{fTotalEnergy\_v} : vector of econstructed energies of the shower [MeV]. One value per plane.
-\item \textbf{fSigmaTotalEnergy\_v} : vector of econstructed uncertainties on the energy of the shower [MeV]. One value per plane.
-\item \textbf{fTotalMIPEnergy\_v} : {\color{red} DEPRECATED VARIABLE}
-\item \textbf{fSigmaTotalMIPEnergy\_v} : {\color{red} DEPRECATED VARIABLE}
-\item \textbf{fdEdx} : reconstructed dE/dx [MeV/cm].
-\item \textbf{fSigmadEdx} : reconstructed uncertainty on the dE/dx [MeV/cm].
-\item \textbf{fdEdx\_v} : vector of reconstructed dE/dx [MeV/cm]. One value per plane.
-\item \textbf{fSigmadEdx} : vector of reconstructed uncertainties on the dE/dx [MeV/cm]. One value per plane.
-\item \textbf{fdQdx} : reconstructed dQ/dx [$e^-$/cm].
-\item \textbf{fSigmadQdx} : reconstructed uncertainty on the dQ/dx [$e^-$/cm].
-\item \textbf{fdQdx\_v} : vector of reconstructed dQ/dx [$e^-$/cm]. One value per plane.
-\item \textbf{fSigmadQdx} : vector of reconstructed uncertainties on the dQ/dx [$e^-$/cm]. One value per plane.
-\item \textbf{fBestdQdxPlane} : Plane on which the best reconstructed dQ/dx value can be found.
-\item \textbf{fShoweringLength} : vector of 2D distace between start point and showering point. One value per plane.
-\item \textbf{fBestPlanne} : {\color{red} DEPRECATED VARIABLE}
-\item \textbf{fPlaneIDs} : {\color{red} DESCRIBE}
-\item \textbf{fPlaneIsBad} : {\color{red} DESCRIBE}
-   
-\end{itemize}
+\paragraph{}The \texttt{Shower\_t} C++ \texttt{struct} is a container which is used to store the reconstructed quantities of each input shower, as it progresses through the reconstruction chain. This is a temporary container, which, at the end of the reconstruction path, is used to fill the \texttt{larlite::shower} data-product to be saved in an output file. We here list the attributes of this container, along with a brief description. The \texttt{Shower\_t} struct can be explored \href{https://github.com/larlight/larlite/blob/trunk/UserDev/RecoTool/ShowerReco3D/Base/ShowerRecoTypes.h}{here}.
+
 
 \subsection{Modular Algorithms}
 \paragraph{}Showers are reconstructed by a chain of algorithms, run sequentially. Within the framework, each algorithm aims at reconstructing specific quantities, such as the dE/dx, vertex, start point, etc of a shower. Each algorithm can use information contained in the \texttt{PFParticle} input, as well as any quantities reconstructed by previous algorithms. For example, a module which calculates the shower's dE/dx, can use the 3D direction of the shower reconstructed at a previous stage to better estimate the spatial separation of hits.
+\paragraph{}The main function available in all instances of the modular algo base-class is the \texttt{do\_reconstruction} function, which takes as input a constant reference to an input \texttt{ProtoShower} and a reference to an editable {Shower\_t} object. Within this function is where any code that aims to reconstruct a specific quantity should live.
+\paragraph{}Each modular algo has access to a \texttt{TTree} which can be initialized in the \texttt{initialize} function and filled in the \texttt{do\_reconstruction} function with variables to be saved mainly for debugging purposes.
+\paragraph{}An important feature of the modular algo framework is that within any modular-aglorithm a \href{https://github.com/larlight/larlite/blob/trunk/UserDev/RecoTool/ShowerReco3D/Base/ShowerRecoException.h}{\texttt{ShowerRecoExcepton}} can be thrown. This tools effectively serves as a veto-power through which each algorithm can decide if the reconstruction chain shall continue or not for the provided input \texttt{ProtoShower}. Throwing an exception will result in no subsequent algorithm in the reconstruction chain being called, and no reconstructed shower to be produced for a given input \texttt{PFParticle}. This is meant as an internal quality-control tool. For example, an algorithm which notices that the start-points across different clusters on different planes are incompatible may halt the reconstruction chain by throwing an exception, thus avoiding the reconstruction of an ill-formed shower.
 
